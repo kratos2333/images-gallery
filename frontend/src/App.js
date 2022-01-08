@@ -3,6 +3,7 @@ import {useState} from 'react';
 import Header from './components/header';
 import Search from './components/search';
 import ImageCard from "./components/imageCard";
+import {Col, Container, Row} from "react-bootstrap";
 
 const UNSPLASH_KEY = process.env.REACT_APP_UNSPLASH_KEY;
 
@@ -32,9 +33,14 @@ const App = () => {
             <Search word={word} setWord={setWord} handleSubmit={handleSearchSubmit}/>
             {/*// map will loop through the array and return a brand new array*/}
             {/*// in this case is the ImageCard array*/}
-            {images.map((image, i) => {
-                return (<ImageCard image={image} key={i}/>);
-            })}
+            <Container className="mt-4">
+                <Row xs={1} md={2} lg={3}>
+                    {images.map((image, i) => {
+                         return (<Col key={i} className="pb-3"><ImageCard image={image} /></Col>);
+                    })}
+                </Row>
+            </Container>
+
         </div>
     );
 }
