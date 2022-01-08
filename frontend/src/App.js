@@ -10,6 +10,11 @@ const UNSPLASH_KEY = process.env.REACT_APP_UNSPLASH_KEY;
 const App = () => {
     const [word, setWord] = useState('');
     const [images, setImages] = useState([]);
+
+    const deleteImage = (delete_id) => {
+        setImages(images.filter((image)=>{return image.id !== delete_id}))
+    }
+
     const handleSearchSubmit = (e) => {
         e.preventDefault();
         console.log(word)
@@ -36,7 +41,8 @@ const App = () => {
             <Container className="mt-4">
                 <Row xs={1} md={2} lg={3}>
                     {images.map((image, i) => {
-                         return (<Col key={i} className="pb-3"><ImageCard image={image} /></Col>);
+                        return (
+                            <Col key={i} className="pb-3"><ImageCard image={image} deleteImage={deleteImage}/></Col>);
                     })}
                 </Row>
             </Container>
