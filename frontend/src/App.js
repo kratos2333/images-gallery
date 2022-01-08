@@ -4,6 +4,7 @@ import Header from './components/header';
 import Search from './components/search';
 import ImageCard from "./components/imageCard";
 import {Col, Container, Row} from "react-bootstrap";
+import Welcome from "./components/welcome";
 
 const UNSPLASH_KEY = process.env.REACT_APP_UNSPLASH_KEY;
 
@@ -12,7 +13,9 @@ const App = () => {
     const [images, setImages] = useState([]);
 
     const deleteImage = (delete_id) => {
-        setImages(images.filter((image)=>{return image.id !== delete_id}))
+        setImages(images.filter((image) => {
+            return image.id !== delete_id
+        }))
     }
 
     const handleSearchSubmit = (e) => {
@@ -39,12 +42,13 @@ const App = () => {
             {/*// map will loop through the array and return a brand new array*/}
             {/*// in this case is the ImageCard array*/}
             <Container className="mt-4">
-                <Row xs={1} md={2} lg={3}>
+                {images.length ? <Row xs={1} md={2} lg={3}>
                     {images.map((image, i) => {
                         return (
                             <Col key={i} className="pb-3"><ImageCard image={image} deleteImage={deleteImage}/></Col>);
                     })}
-                </Row>
+                </Row> : <Welcome/>}
+
             </Container>
 
         </div>
