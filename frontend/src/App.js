@@ -1,5 +1,6 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
 import {useState} from 'react';
+import axios from 'axios';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from './components/header';
 import Search from './components/search';
 import ImageCard from "./components/imageCard";
@@ -19,20 +20,15 @@ const App = () => {
         }))
     }
 
-    const handleSearchSubmit = (e) => {
+    const handleSearchSubmit = async(e) => {
         e.preventDefault();
-        console.log(word)
-        fetch(`${API_URL}/new-image?query=${word}`)
-            .then(res => res.json())
-            .then(data => {
-                // insert the new image in the beginning images list
-                // insert the object as the spread
-                // we also include the search word here to be the title of the card
-                setImages([{...data, title: word}, ...images])
-            })
-            .catch(err => {
-                console.log(err);
-            })
+        try{
+            const res = await axios.get(`${API_URL}/new-image?query=${word}`)
+            setImages([{...res.data, title: word}, ...images])
+        } catch (error) {
+            console.log(error)
+        }
+
         setWord('')
     }
 
