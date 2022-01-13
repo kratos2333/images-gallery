@@ -1,10 +1,10 @@
 import React from 'react';
 import {Button, Card} from "react-bootstrap";
 
-const ImageCard = ({image, deleteImage}) => {
-    return(
-        <Card style={{ width: '18rem' }}>
-            <Card.Img variant="top" src={image.urls.small} />
+const ImageCard = ({image, deleteImage, saveImage}) => {
+    return (
+        <Card style={{width: '18rem'}}>
+            <Card.Img variant="top" src={image.urls.small}/>
             <Card.Body>
                 {/*<Card.Title>{image.title && image.title.toUpperCase()}</Card.Title>*/}
                 {/*new optional chaining syntax*/}
@@ -12,7 +12,13 @@ const ImageCard = ({image, deleteImage}) => {
                 <Card.Text>
                     {image.description || image.alt_description}
                 </Card.Text>
-                <Button variant="primary" onClick={()=>{deleteImage(image.id)}}>Delete</Button>
+                <Button variant="primary" onClick={() => {
+                    deleteImage(image.id)
+                }}>Delete</Button>
+                {" "}
+                {!image.saved && <Button variant="secondary" onClick={() => {
+                    saveImage(image.id)
+                }}>Save</Button>}
             </Card.Body>
         </Card>
     )

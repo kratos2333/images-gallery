@@ -26,12 +26,32 @@ const App = () => {
 
     // we should run useEffect only once when it loaded
     // depend on nonthing will achieve that
-    useEffect(() => getSavedImages(), [])
+    useEffect(getSavedImages, [])
 
     const deleteImage = (delete_id) => {
         setImages(images.filter((image) => {
             return image.id !== delete_id
         }))
+    }
+
+    const saveImage = async(save_id) => {
+        const imageToBeSaved = images.find((image) => image.id === save_id);
+
+        // Before save to db we need to add this attribute
+        imageToBeSaved.saved = true;
+
+        try {
+            // Note the image we save in the state already have the title attr
+            const res = await axios.post(`${API_URL}/images`, imageToBeSaved);
+
+            // python API will return insterted_key
+            // If saved successfully we also need to update the current Images state
+            if (res.data?.inserted_id) {
+                setImages(images.map((image) => image.id === save_id ? {...image, saved: true}:image))
+            }
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     const handleSearchSubmit = async(e) => {
@@ -56,7 +76,13 @@ const App = () => {
                 {images.length ? <Row xs={1} md={2} lg={3}>
                     {images.map((image, i) => {
                         return (
-                            <Col key={i} className="pb-3"><ImageCard image={image} deleteImage={deleteImage}/></Col>);
+                            <Col key={i} className="pb-3">
+                                <ImageCard
+                                    image={image}
+                                    deleteImage={deleteImage}
+                                    saveImage={saveImage}
+                                />
+                            </Col>);
                     })}
                 </Row> : <Welcome/>}
 
