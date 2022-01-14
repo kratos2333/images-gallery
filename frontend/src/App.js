@@ -28,10 +28,20 @@ const App = () => {
     // depend on nonthing will achieve that
     useEffect(getSavedImages, [])
 
-    const deleteImage = (delete_id) => {
-        setImages(images.filter((image) => {
-            return image.id !== delete_id
-        }))
+    const deleteImage = async(delete_id) => {
+        // Delete from state and also the database
+        try {
+            const res = await axios.delete(`${API_URL}/images/${delete_id}`)
+            if(res.data.deleted){
+                console.log("delete image successfully")
+                setImages(images.filter((image) => {
+                    return image.id !== delete_id
+                }))
+            }
+        } catch(error){
+            console.log(error)
+        }
+
     }
 
     const saveImage = async(save_id) => {
