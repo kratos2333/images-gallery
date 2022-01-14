@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from './components/header';
 import Search from './components/search';
 import ImageCard from "./components/imageCard";
+import Spinner from "./components/appSpinner";
 import {Col, Container, Row} from "react-bootstrap";
 import Welcome from "./components/welcome";
 
@@ -13,12 +14,15 @@ const API_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:5050'
 const App = () => {
     const [word, setWord] = useState('');
     const [images, setImages] = useState([]);
+    const [isLoading, setIsLoading] = useState(false)
 
     const getSavedImages = async() => {
         try {
+            setIsLoading(true)
             const res = await axios.get(`${API_URL}/images`)
             // TODO currently the res.data not including title
             setImages(res.data || []);
+            setIsLoading(false)
         } catch(error) {
             console.log(error);
         }
@@ -32,7 +36,7 @@ const App = () => {
         // Delete from state and also the database
         try {
             const res = await axios.delete(`${API_URL}/images/${delete_id}`)
-            if(res.data.deleted){
+            if(res.data?.deleted_id){
                 console.log("delete image successfully")
                 setImages(images.filter((image) => {
                     return image.id !== delete_id
@@ -79,24 +83,25 @@ const App = () => {
     return (
         <div>
             <Header title="Images Gallery"/>
-            <Search word={word} setWord={setWord} handleSubmit={handleSearchSubmit}/>
-            {/*// map will loop through the array and return a brand new array*/}
-            {/*// in this case is the ImageCard array*/}
-            <Container className="mt-4">
-                {images.length ? <Row xs={1} md={2} lg={3}>
-                    {images.map((image, i) => {
-                        return (
-                            <Col key={i} className="pb-3">
-                                <ImageCard
-                                    image={image}
-                                    deleteImage={deleteImage}
-                                    saveImage={saveImage}
-                                />
-                            </Col>);
-                    })}
-                </Row> : <Welcome/>}
+            {isLoading? <Spinner /> : <><Search word={word} setWord={setWord} handleSubmit={handleSearchSubmit}/>
+                {/*// map will loop through the array and return a brand new array*/}
+                {/*// in this case is the ImageCard array*/}
+                <Container className="mt-4">
+                    {images.length ? <Row xs={1} md={2} lg={3}>
+                        {images.map((image, i) => {
+                            return (
+                                <Col key={i} className="pb-3">
+                                    <ImageCard
+                                        image={image}
+                                        deleteImage={deleteImage}
+                                        saveImage={saveImage}
+                                    />
+                                </Col>);
+                        })}
+                    </Row> : <Welcome/>}
 
-            </Container>
+                </Container></>}
+
 
         </div>
     );
